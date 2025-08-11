@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package notificaion;
+package notification;
+
+option go_package = "ecommerce/proto/notification";
 
 message Notification {
   string id = 1;

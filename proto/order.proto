@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package order;
 
+option go_package = "ecommerce/proto/order";
+
 message Order {
   string id = 1;
   string user_id = 2;
