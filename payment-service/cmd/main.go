@@ -5,8 +5,8 @@ import (
 	"log"
 	"net"
 
+	paymentpb "github.com/Trypion/ecommerce/proto/payment"
 	"google.golang.org/grpc"
-	paymentpb "ecommerce/proto/payment"
 )
 
 type server struct {

@@ -5,8 +5,8 @@ import (
 	"log"
 	"net"
 
+	notificationpb "github.com/Trypion/ecommerce/proto/notification"
 	"google.golang.org/grpc"
-	notificationpb "ecommerce/proto/notification"
 )
 
 type server struct {

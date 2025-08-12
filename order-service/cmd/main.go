@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	orderpb "ecommerce/proto/order"
 	"log"
 	"net"
+
+	orderpb "github.com/Trypion/ecommerce/proto/order"
 
 	"google.golang.org/grpc"
 )
