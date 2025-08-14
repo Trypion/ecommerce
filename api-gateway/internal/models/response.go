@@ -13,6 +13,18 @@ type Order struct {
 	CreatedAt string      `json:"created_at"`
 }
 
+type Payment struct {
+	ID        string  `json:"id"`
+	OrderID   string  `json:"order_id"`
+	Amount    float64 `json:"amount"`
+	Status    string  `json:"status"`
+	CreatedAt string  `json:"created_at"`
+}
+
+type ProcessPaymentResponse struct {
+	Payment Payment `json:"payment"`
+}
+
 type ErrorResponse struct {
 	Error   string `json:"error"`
 	Message string `json:"message"`
