@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net"
+	"time"
 
 	paymentpb "github.com/Trypion/ecommerce/proto/payment"
 	"google.golang.org/grpc"
@@ -17,7 +18,15 @@ func (s *server) ProcessPayment(
 	ctx context.Context,
 	req *paymentpb.ProcessPaymentRequest,
 ) (*paymentpb.ProcessPaymentResponse, error) {
-	return nil, nil
+	return &paymentpb.ProcessPaymentResponse{
+		Payment: &paymentpb.Payment{
+			Id:        "payment-123",
+			OrderId:   req.OrderId,
+			Amount:    req.Amount,
+			Status:    "COMPLETED",
+			CreatedAt: time.Now().Format(time.RFC3339),
+		},
+	}, nil
 }
 
 func main() {
