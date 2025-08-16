@@ -5,6 +5,7 @@ import (
 
 	"github.com/Trypion/ecommerce/api-gateway/internal/clients"
 	"github.com/Trypion/ecommerce/api-gateway/internal/handlers"
+	"github.com/Trypion/ecommerce/api-gateway/internal/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,13 +16,18 @@ func main() {
 	}
 	defer orderClient.Close()
 
-	orderHandler := handlers.NewOrderHandler(orderClient)
-
-	router := gin.Default()
-	api := router.Group("/api")
-	{
-		api.POST("/orders", orderHandler.CreateOrder)
+	paymentClient, err := clients.NewPaymentClient("localhost:50052")
+	if err != nil {
+		log.Fatalf("Failed to create payment client: %v", err)
 	}
+	defer paymentClient.Close()
+
+	orderHandler := handlers.NewOrderHandler(orderClient)
+	paymentHandler := handlers.NewPaymentHandler(paymentClient)
+
+	router := gin.New()
+
+	routes.SetupRoutes(router, orderHandler, paymentHandler)
 
 	router.Run(":8080")
 }
