@@ -64,3 +64,27 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+func (h *OrderHandler) ListOrders(c *gin.Context) {
+	var req models.ListOrdersRequest
+
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: err.Error(),
+			Code:  http.StatusBadRequest,
+		})
+		return
+	}
+
+	resp, err := h.orderClient.ListOrders(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error:   "internal_error",
+			Message: "Failed to list orders" + err.Error(),
+			Code:    http.StatusInternalServerError,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

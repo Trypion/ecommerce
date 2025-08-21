@@ -80,6 +80,59 @@ func (oc *OrderClient) GetOrder(
 	return resp, nil
 }
 
+func (oc *OrderClient) ListOrders(
+	ctx context.Context,
+	req *models.ListOrdersRequest,
+) (*models.ListOrdersResponse, error) {
+	protoReq := &orderpb.ListOrderRequest{
+		Page:   int32(req.Page),
+		Limit:  int32(req.Limit),
+		UserId: "123",
+	}
+
+	ctxx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	protoResp, err := oc.client.ListOrders(ctxx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &models.ListOrdersResponse{
+		Orders: convertProtoOrdersToHTTP(protoResp.Orders),
+		Total:  int(protoResp.Total),
+	}
+
+	return resp, nil
+}
+
+func convertProtoOrdersToHTTP(orders []*orderpb.Order) []models.Order {
+	httpOrders := make([]models.Order, len(orders))
+	for i, order := range orders {
+		httpOrders[i] = models.Order{
+			ID:        order.Id,
+			UserID:    order.UserId,
+			Items:     convertProtoItemsToHTTP(order.Items),
+			Total:     order.Total,
+			Status:    order.Status,
+			CreatedAt: order.CreatedAt,
+		}
+	}
+	return httpOrders
+}
+
+func convertProtoItemsToHTTP(items []*orderpb.OrderItem) []models.OrderItem {
+	httpItems := make([]models.OrderItem, len(items))
+	for i, item := range items {
+		httpItems[i] = models.OrderItem{
+			ProductID: item.ProductId,
+			Quantity:  int(item.Quantity), // Convert int32 to int
+			Price:     item.Price,
+		}
+	}
+	return httpItems
+}
+
 func convertToProtoItems(items []models.OrderItem) []*orderpb.OrderItem {
 	protoItems := make([]*orderpb.OrderItem, len(items))
 	for i, item := range items {

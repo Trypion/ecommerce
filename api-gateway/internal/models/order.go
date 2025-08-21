@@ -36,6 +36,11 @@ type ListOrdersRequest struct {
 	Limit int `form:"limit" binding:"omitempty,min=1,max=100"`
 }
 
+type ListOrdersResponse struct {
+	Orders []Order `json:"orders" binding:"required,dive"`
+	Total  int     `json:"total" binding:"required"`
+}
+
 type OrderItem struct {
 	ProductID string  `json:"product_id" binding:"required"`
 	Quantity  int     `json:"quantity" binding:"required,min=1"`
