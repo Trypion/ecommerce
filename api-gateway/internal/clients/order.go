@@ -57,6 +57,29 @@ func (oc *OrderClient) CreateOrder(
 	return resp, nil
 }
 
+func (oc *OrderClient) GetOrder(
+	ctx context.Context,
+	req *models.GetOrderRequest,
+) (*models.GetOrderResponse, error) {
+	protoReq := &orderpb.GetOrderRequest{
+		Id: req.ID,
+	}
+
+	ctxx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	protoResp, err := oc.client.GetOrder(ctxx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &models.GetOrderResponse{
+		Order: convertProtoOrderToHTTP(protoResp.Order),
+	}
+
+	return resp, nil
+}
+
 func convertToProtoItems(items []models.OrderItem) []*orderpb.OrderItem {
 	protoItems := make([]*orderpb.OrderItem, len(items))
 	for i, item := range items {

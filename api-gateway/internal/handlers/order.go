@@ -40,3 +40,27 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, resp)
 }
+
+func (h *OrderHandler) GetOrder(c *gin.Context) {
+	var req models.GetOrderRequest
+
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: err.Error(),
+			Code:  http.StatusBadRequest,
+		})
+		return
+	}
+
+	resp, err := h.orderClient.GetOrder(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error:   "internal_error",
+			Message: "Failed to get order" + err.Error(),
+			Code:    http.StatusInternalServerError,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
