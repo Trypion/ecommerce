@@ -106,6 +106,29 @@ func (oc *OrderClient) ListOrders(
 	return resp, nil
 }
 
+func (oc *OrderClient) CancelOrder(
+	ctx context.Context,
+	req *models.CancelOrderRequest,
+) (*models.CancelOrderResponse, error) {
+	protoReq := &orderpb.CancelOrderRequest{
+		Id: req.ID,
+	}
+
+	ctxx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	protoResp, err := oc.client.CancelOrder(ctxx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &models.CancelOrderResponse{
+		Success: protoResp.Success,
+	}
+
+	return resp, nil
+}
+
 func convertProtoOrdersToHTTP(orders []*orderpb.Order) []models.Order {
 	httpOrders := make([]models.Order, len(orders))
 	for i, order := range orders {

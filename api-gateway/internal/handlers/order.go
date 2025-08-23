@@ -88,3 +88,27 @@ func (h *OrderHandler) ListOrders(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+func (h *OrderHandler) CancelOrder(c *gin.Context) {
+	var req models.CancelOrderRequest
+
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{
+			Error: err.Error(),
+			Code:  http.StatusBadRequest,
+		})
+		return
+	}
+
+	resp, err := h.orderClient.CancelOrder(c.Request.Context(), &req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{
+			Error:   "internal_error",
+			Message: "Failed to cancel order" + err.Error(),
+			Code:    http.StatusInternalServerError,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
