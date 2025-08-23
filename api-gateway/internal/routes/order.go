@@ -9,8 +9,9 @@ func SetupOrderRoutes(router *gin.RouterGroup, orderHandler *handlers.OrderHandl
 	orders := router.Group("/orders")
 	{
 		orders.POST("", orderHandler.CreateOrder)
-		orders.GET("/", orderHandler.ListOrders)
+		orders.GET("", orderHandler.ListOrders)
 		orders.GET("/:order_id", orderHandler.GetOrder)
+		orders.PUT("/:order_id", orderHandler.UpdateOrder)
 		orders.DELETE("/:order_id", orderHandler.CancelOrder)
 	}
 }

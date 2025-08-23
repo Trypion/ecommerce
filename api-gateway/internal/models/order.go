@@ -14,6 +14,10 @@ type UpdateOrderRequest struct {
 	Status string `json:"status" binding:"required"`
 }
 
+type UpdateOrderResponse struct {
+	Order Order `json:"order"`
+}
+
 type CancelOrderRequest struct {
 	ID string `uri:"id" binding:"required"`
 }
