@@ -1,46 +1,66 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/Trypion/ecommerce/order-service/internal/config"
+	"github.com/Trypion/ecommerce/order-service/internal/database"
+	"github.com/Trypion/ecommerce/order-service/internal/handlers"
+	"github.com/Trypion/ecommerce/order-service/internal/repository"
+	"github.com/Trypion/ecommerce/order-service/internal/service"
 	orderpb "github.com/Trypion/ecommerce/proto/order"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
-type server struct {
-	orderpb.UnimplementedOrderServiceServer
-}
-
-func (s *server) CreateOrder(
-	ctx context.Context,
-	req *orderpb.CreateOrderRequest,
-) (*orderpb.CreateOrderResponse, error) {
-
-	return &orderpb.CreateOrderResponse{
-		Order: &orderpb.Order{
-			Id:        "12345",
-			Items:     req.GetItems(),
-			Total:     10.0,
-			Status:    "CREATED",
-			CreatedAt: time.Now().Format(time.RFC3339),
-		},
-	}, nil
-}
-
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	// Load configuration
+	cfg := config.Load()
+	log.Println("Configuration loaded")
+
+	// Connect to database (migrations run automatically)
+	db, err := database.NewConnection(cfg)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatal("Failed to connect to database:", err)
+	}
+	log.Println("Database connected successfully")
+
+	// Initialize layers
+	orderRepo := repository.NewOrderRepository(db)
+	orderService := service.NewOrderService(orderRepo)
+	orderHandler := handlers.NewOrderHandler(orderService)
+
+	// Setup gRPC server
+	lis, err := net.Listen("tcp", ":"+cfg.Port)
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	orderpb.RegisterOrderServiceServer(grpcServer, &server{})
-	log.Printf("Server is running on port :50051")
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	orderpb.RegisterOrderServiceServer(grpcServer, orderHandler)
+
+	// Enable reflection for development (optional)
+	reflection.Register(grpcServer)
+
+	// Graceful shutdown
+	go func() {
+		log.Printf("gRPC server starting on port %s", cfg.Port)
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("Failed to serve: %v", err)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down server...")
+	grpcServer.GracefulStop()
+	log.Println("Server stopped")
 }
