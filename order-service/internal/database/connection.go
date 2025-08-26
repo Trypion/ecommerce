@@ -3,8 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"path/filepath"
-	"runtime"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -44,11 +42,8 @@ func NewConnection(cfg *config.Config) (*gorm.DB, error) {
 }
 
 func runMigrations(databaseURL string) error {
-	// Get migrations path
-	migrationsPath := getMigrationsPath()
-
 	// Create migrator
-	migrator, err := NewMigrator(databaseURL, migrationsPath)
+	migrator, err := NewMigrator(databaseURL)
 	if err != nil {
 		return err
 	}
@@ -56,18 +51,6 @@ func runMigrations(databaseURL string) error {
 
 	// Run migrations
 	return migrator.Up()
-}
-
-func getMigrationsPath() string {
-	// Get current file path
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return "./internal/database/migrations"
-	}
-
-	// Get directory of current file and append migrations
-	dir := filepath.Dir(filename)
-	return filepath.Join(dir, "migrations")
 }
 
 func buildDSN(cfg *config.Config) string {

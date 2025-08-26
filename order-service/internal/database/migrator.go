@@ -2,21 +2,25 @@ package database
 
 import (
 	"database/sql"
+	"embed"
 	"errors"
 	"fmt"
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/lib/pq"
 )
+
+//go:embed migrations/*.sql
+var migrationFiles embed.FS
 
 type Migrator struct {
 	migrate *migrate.Migrate
 }
 
-func NewMigrator(databaseURL, migrationsPath string) (*Migrator, error) {
+func NewMigrator(databaseURL string) (*Migrator, error) {
 	// Open database connection
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
@@ -29,12 +33,13 @@ func NewMigrator(databaseURL, migrationsPath string) (*Migrator, error) {
 		return nil, fmt.Errorf("failed to create postgres driver: %w", err)
 	}
 
-	// Create migrate instance
-	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file://%s", migrationsPath),
-		"postgres",
-		driver,
-	)
+	// source drive from embedded files
+	sourceDrive, err := iofs.New(migrationFiles, "migrations")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create source driver: %w", err)
+	}
+
+	m, err := migrate.NewWithInstance("iofs", sourceDrive, "postgres", driver)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create migrate instance: %w", err)
 	}
