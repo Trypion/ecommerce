@@ -1,0 +1,13 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  full_bin = "dlv --headless --listen=:2345 --api-version=2 --accept-multiclient exec ./tmp/api-gateway"
+  cmd = "go build -gcflags='all=-N -l' -o ./tmp/api-gateway ./cmd/main.go"
+  include_ext = ["go"]
+  exclude_regex = ["_test.go"]
+  exclude_dir = ["tmp", "vendor"]
+  delay = 1000
+
+[screen]
+  keep_scroll = true
