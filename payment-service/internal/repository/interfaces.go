@@ -13,4 +13,11 @@ type PaymentRepository interface {
 	Update(ctx context.Context, payment *models.Payment) error
 	Delete(ctx context.Context, id string) error
 	Count(ctx context.Context) (int64, error)
+
+	CreateRefund(ctx context.Context, refund *models.Refund) error
+	GetRefundById(ctx context.Context, id string) (*models.Refund, error)
+	GetRefundsByPaymentID(ctx context.Context, paymentID string) ([]models.Refund, error)
+	UpdateRefund(ctx context.Context, refund *models.Refund) error
+
+	GetPaymentsWithRefunds(ctx context.Context, limit, offset int) ([]models.Payment, error)
 }
