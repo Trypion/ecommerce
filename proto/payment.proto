@@ -22,6 +22,36 @@ message ProcessPaymentResponse {
   Payment payment = 1;
 }
 
+message GetPaymentRequest {
+  string payment_id = 1;
+}
+
+message GetPaymentResponse {
+  Payment payment = 1;
+}
+
+message ListPaymentRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListPaymentResponse {
+  repeated Payment payments = 1;
+}
+
+message RefundPaymentRequest {
+  string payment_id = 1;
+  double amount = 2;
+}
+
+message RefundPaymentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
 service PaymentService {
   rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  rpc GetPayment(GetPaymentRequest) returns (GetPaymentResponse);
+  rpc ListPayments(ListPaymentRequest) returns (ListPaymentResponse);
+  rpc RefundPayment(RefundPaymentRequest) returns (RefundPaymentResponse);
 }
