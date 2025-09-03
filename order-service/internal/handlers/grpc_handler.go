@@ -74,7 +74,7 @@ func (h *OrderHandler) ListOrders(
 	// Convert to proto
 	protoOrders := make([]*orderpb.Order, len(orders))
 	for i, order := range orders {
-		protoOrders[i] = convertOrderToProto(&order)
+		protoOrders[i] = convertOrderToProto(order)
 	}
 
 	return &orderpb.ListOrderResponse{

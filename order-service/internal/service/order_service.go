@@ -12,7 +12,7 @@ import (
 type OrderService interface {
 	CreateOrder(ctx context.Context, userID string, items []models.OrderItem) (*models.Order, error)
 	GetOrder(ctx context.Context, id string) (*models.Order, error)
-	ListOrders(ctx context.Context, userID string, page, limit int) ([]models.Order, int64, error)
+	ListOrders(ctx context.Context, userID string, page, limit int) ([]*models.Order, int64, error)
 	UpdateOrderStatus(ctx context.Context, id, status string) (*models.Order, error)
 	CancelOrder(ctx context.Context, id string) error
 }
@@ -61,7 +61,7 @@ func (s *orderService) GetOrder(ctx context.Context, id string) (*models.Order, 
 	return order, nil
 }
 
-func (s *orderService) ListOrders(ctx context.Context, userID string, page, limit int) ([]models.Order, int64, error) {
+func (s *orderService) ListOrders(ctx context.Context, userID string, page, limit int) ([]*models.Order, int64, error) {
 	offset := (page - 1) * limit
 
 	orders, err := s.repo.GetByUserID(ctx, userID, limit, offset)

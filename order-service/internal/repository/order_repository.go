@@ -29,8 +29,8 @@ func (r *orderRepository) GetByID(ctx context.Context, id string) (*models.Order
 	return &order, nil
 }
 
-func (r *orderRepository) GetByUserID(ctx context.Context, userID string, limit, offset int) ([]models.Order, error) {
-	var orders []models.Order
+func (r *orderRepository) GetByUserID(ctx context.Context, userID string, limit, offset int) ([]*models.Order, error) {
+	var orders []*models.Order
 	err := r.db.WithContext(ctx).
 		Preload("Items").
 		Where("user_id = ?", userID).
