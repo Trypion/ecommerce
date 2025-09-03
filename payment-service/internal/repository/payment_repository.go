@@ -60,8 +60,8 @@ func (r *paymentRepository) GetRefundById(ctx context.Context, id string) (*mode
 	return &refund, nil
 }
 
-func (r *paymentRepository) GetRefundsByPaymentID(ctx context.Context, paymentID string) ([]models.Refund, error) {
-	var refunds []models.Refund
+func (r *paymentRepository) GetRefundsByPaymentID(ctx context.Context, paymentID string) ([]*models.Refund, error) {
+	var refunds []*models.Refund
 	err := r.db.WithContext(ctx).Where("payment_id = ?", paymentID).Find(&refunds).Error
 	if err != nil {
 		return nil, err
@@ -73,8 +73,8 @@ func (r *paymentRepository) UpdateRefund(ctx context.Context, refund *models.Ref
 	return r.db.WithContext(ctx).Save(refund).Error
 }
 
-func (r *paymentRepository) GetPaymentsWithRefunds(ctx context.Context, limit, offset int) ([]models.Payment, error) {
-	var payments []models.Payment
+func (r *paymentRepository) GetPaymentsWithRefunds(ctx context.Context, limit, offset int) ([]*models.Payment, error) {
+	var payments []*models.Payment
 	err := r.db.WithContext(ctx).Preload("Refunds").Limit(limit).Offset(offset).Find(&payments).Error
 	if err != nil {
 		return nil, err
