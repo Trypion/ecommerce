@@ -439,8 +439,10 @@ func (x *RefundPaymentRequest) GetAmount() float64 {
 
 type RefundPaymentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Payment       *Payment               `protobuf:"bytes,1,opt,name=payment,proto3" json:"payment,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	Amount        float64                `protobuf:"fixed64,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -475,16 +477,30 @@ func (*RefundPaymentResponse) Descriptor() ([]byte, []int) {
 	return file_proto_payment_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *RefundPaymentResponse) GetSuccess() bool {
+func (x *RefundPaymentResponse) GetPayment() *Payment {
 	if x != nil {
-		return x.Success
+		return x.Payment
 	}
-	return false
+	return nil
 }
 
-func (x *RefundPaymentResponse) GetMessage() string {
+func (x *RefundPaymentResponse) GetStatus() string {
 	if x != nil {
-		return x.Message
+		return x.Status
+	}
+	return ""
+}
+
+func (x *RefundPaymentResponse) GetAmount() float64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *RefundPaymentResponse) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
 	}
 	return ""
 }
@@ -520,10 +536,13 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\x14RefundPaymentRequest\x12\x1d\n" +
 	"\n" +
 	"payment_id\x18\x01 \x01(\tR\tpaymentId\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x01R\x06amount\"K\n" +
-	"\x15RefundPaymentResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\xc5\x02\n" +
+	"\x06amount\x18\x02 \x01(\x01R\x06amount\"\x92\x01\n" +
+	"\x15RefundPaymentResponse\x12*\n" +
+	"\apayment\x18\x01 \x01(\v2\x10.payment.PaymentR\apayment\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x01R\x06amount\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\tR\tcreatedAt2\xc5\x02\n" +
 	"\x0ePaymentService\x12Q\n" +
 	"\x0eProcessPayment\x12\x1e.payment.ProcessPaymentRequest\x1a\x1f.payment.ProcessPaymentResponse\x12E\n" +
 	"\n" +
@@ -559,19 +578,20 @@ var file_proto_payment_proto_depIdxs = []int32{
 	0, // 0: payment.ProcessPaymentResponse.payment:type_name -> payment.Payment
 	0, // 1: payment.GetPaymentResponse.payment:type_name -> payment.Payment
 	0, // 2: payment.ListPaymentResponse.payments:type_name -> payment.Payment
-	1, // 3: payment.PaymentService.ProcessPayment:input_type -> payment.ProcessPaymentRequest
-	3, // 4: payment.PaymentService.GetPayment:input_type -> payment.GetPaymentRequest
-	5, // 5: payment.PaymentService.ListPayments:input_type -> payment.ListPaymentRequest
-	7, // 6: payment.PaymentService.RefundPayment:input_type -> payment.RefundPaymentRequest
-	2, // 7: payment.PaymentService.ProcessPayment:output_type -> payment.ProcessPaymentResponse
-	4, // 8: payment.PaymentService.GetPayment:output_type -> payment.GetPaymentResponse
-	6, // 9: payment.PaymentService.ListPayments:output_type -> payment.ListPaymentResponse
-	8, // 10: payment.PaymentService.RefundPayment:output_type -> payment.RefundPaymentResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 3: payment.RefundPaymentResponse.payment:type_name -> payment.Payment
+	1, // 4: payment.PaymentService.ProcessPayment:input_type -> payment.ProcessPaymentRequest
+	3, // 5: payment.PaymentService.GetPayment:input_type -> payment.GetPaymentRequest
+	5, // 6: payment.PaymentService.ListPayments:input_type -> payment.ListPaymentRequest
+	7, // 7: payment.PaymentService.RefundPayment:input_type -> payment.RefundPaymentRequest
+	2, // 8: payment.PaymentService.ProcessPayment:output_type -> payment.ProcessPaymentResponse
+	4, // 9: payment.PaymentService.GetPayment:output_type -> payment.GetPaymentResponse
+	6, // 10: payment.PaymentService.ListPayments:output_type -> payment.ListPaymentResponse
+	8, // 11: payment.PaymentService.RefundPayment:output_type -> payment.RefundPaymentResponse
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_payment_proto_init() }

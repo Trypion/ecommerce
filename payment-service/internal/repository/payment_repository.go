@@ -11,10 +11,13 @@ type paymentRepository struct {
 	db *gorm.DB
 }
 
-func NewPaymentRepository(db *gorm.DB) *paymentRepository {
-	return &paymentRepository{
-		db: db,
-	}
+// ListPayments implements PaymentRepository.
+func (r *paymentRepository) ListPayments(ctx context.Context, limit int, offset int) ([]*models.Payment, error) {
+	panic("unimplemented")
+}
+
+func NewPaymentRepository(db *gorm.DB) PaymentRepository {
+	return &paymentRepository{db: db}
 }
 
 func (r *paymentRepository) Create(ctx context.Context, payment *models.Payment) error {

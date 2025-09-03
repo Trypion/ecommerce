@@ -80,6 +80,19 @@ func (s *paymentService) RefundPayment(ctx context.Context, paymentID string, am
 		Status:    "processed",
 	}
 
+	payment.RefundedAmount += amount
+	if payment.RefundedAmount >= payment.Amount {
+		payment.IsRefunded = true
+		payment.Status = "refunded"
+	} else {
+		payment.Status = "partially_refunded"
+	}
+
+	err = s.repo.Update(ctx, payment)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update payment: %w", err)
+	}
+
 	err = s.repo.CreateRefund(ctx, refund)
 	if err != nil {
 		return nil, fmt.Errorf("failed to refund payment: %w", err)
