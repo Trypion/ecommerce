@@ -37,7 +37,7 @@ message ListOrderRequest {
 
 message ListOrderResponse {
   repeated Order orders = 1;
-  int32 total = 2;
+  int64 total = 2;
 }
 
 message UpdateOrderRequest {

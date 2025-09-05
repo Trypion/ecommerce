@@ -344,6 +344,7 @@ func (x *ListPaymentRequest) GetLimit() int32 {
 type ListPaymentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Payments      []*Payment             `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -383,6 +384,13 @@ func (x *ListPaymentResponse) GetPayments() []*Payment {
 		return x.Payments
 	}
 	return nil
+}
+
+func (x *ListPaymentResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 type RefundPaymentRequest struct {
@@ -530,9 +538,10 @@ const file_proto_payment_proto_rawDesc = "" +
 	"\apayment\x18\x01 \x01(\v2\x10.payment.PaymentR\apayment\">\n" +
 	"\x12ListPaymentRequest\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\"C\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\"Y\n" +
 	"\x13ListPaymentResponse\x12,\n" +
-	"\bpayments\x18\x01 \x03(\v2\x10.payment.PaymentR\bpayments\"M\n" +
+	"\bpayments\x18\x01 \x03(\v2\x10.payment.PaymentR\bpayments\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"M\n" +
 	"\x14RefundPaymentRequest\x12\x1d\n" +
 	"\n" +
 	"payment_id\x18\x01 \x01(\tR\tpaymentId\x12\x16\n" +

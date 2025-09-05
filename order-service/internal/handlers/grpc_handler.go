@@ -79,7 +79,7 @@ func (h *OrderHandler) ListOrders(
 
 	return &orderpb.ListOrderResponse{
 		Orders: protoOrders,
-		Total:  int32(total),
+		Total:  total,
 	}, nil
 }
 

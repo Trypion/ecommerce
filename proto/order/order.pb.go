@@ -324,7 +324,7 @@ func (x *ListOrderRequest) GetLimit() int32 {
 type ListOrderResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Orders        []*Order               `protobuf:"bytes,1,rep,name=orders,proto3" json:"orders,omitempty"`
-	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -366,7 +366,7 @@ func (x *ListOrderResponse) GetOrders() []*Order {
 	return nil
 }
 
-func (x *ListOrderResponse) GetTotal() int32 {
+func (x *ListOrderResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -682,7 +682,7 @@ const file_proto_order_proto_rawDesc = "" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\"O\n" +
 	"\x11ListOrderResponse\x12$\n" +
 	"\x06orders\x18\x01 \x03(\v2\f.order.OrderR\x06orders\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"<\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"<\n" +
 	"\x12UpdateOrderRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\"9\n" +
