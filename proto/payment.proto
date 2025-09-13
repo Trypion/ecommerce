@@ -37,6 +37,7 @@ message ListPaymentRequest {
 
 message ListPaymentResponse {
   repeated Payment payments = 1;
+  int64 total = 2;
 }
 
 message RefundPaymentRequest {

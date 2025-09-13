@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Trypion/ecommerce/payment-service/internal/models"
 	"github.com/Trypion/ecommerce/payment-service/internal/service"
 	paymentpb "github.com/Trypion/ecommerce/proto/payment"
 	"google.golang.org/grpc/codes"
@@ -53,13 +54,7 @@ func (h *PaymentHandler) GetPayment(
 	}
 
 	return &paymentpb.GetPaymentResponse{
-		Payment: &paymentpb.Payment{
-			Id:        payment.ID,
-			OrderId:   payment.OrderID,
-			Amount:    payment.Amount,
-			Status:    string(payment.Status),
-			CreatedAt: payment.CreatedAt.Format(time.RFC3339),
-		},
+		Payment: convertPaymentToProto(payment),
 	}, nil
 }
 
@@ -84,4 +79,35 @@ func (h *PaymentHandler) RefundPayment(
 		Amount:    refund.Amount,
 		CreatedAt: refund.CreatedAt.Format(time.RFC3339),
 	}, nil
+}
+
+func (h *PaymentHandler) ListPayment(
+	ctx context.Context,
+	req *paymentpb.ListPaymentRequest,
+) (*paymentpb.ListPaymentResponse, error) {
+	payments, total, err := h.service.ListPayments(ctx, int(req.Page), int(req.Limit))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to list payments: %v", err)
+	}
+
+	paymentsProto := make([]*paymentpb.Payment, len(payments))
+
+	for i, payment := range payments {
+		paymentsProto[i] = convertPaymentToProto(payment)
+	}
+
+	return &paymentpb.ListPaymentResponse{
+		Payments: paymentsProto,
+		Total:    total,
+	}, nil
+}
+
+func convertPaymentToProto(payment *models.Payment) *paymentpb.Payment {
+	return &paymentpb.Payment{
+		Id:        payment.ID,
+		OrderId:   payment.OrderID,
+		Amount:    payment.Amount,
+		Status:    string(payment.Status),
+		CreatedAt: payment.CreatedAt.Format(time.RFC3339),
+	}
 }
