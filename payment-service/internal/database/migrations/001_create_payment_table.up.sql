@@ -23,14 +23,15 @@ CREATE TABLE payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
-    processed_at TIMESTAMP NULL,
-    
-    INDEX idx_payments_order_id (order_id),
-    INDEX idx_payments_user_id (user_id),
-    INDEX idx_payments_status (status),
-    INDEX idx_payments_provider_id (provider_id),
-    INDEX idx_payments_deleted_at (deleted_at)
+    processed_at TIMESTAMP NULL
 );
+
+-- Create indexes separately (PostgreSQL way)
+CREATE INDEX idx_payments_order_id ON payments(order_id);
+CREATE INDEX idx_payments_user_id ON payments(user_id);
+CREATE INDEX idx_payments_status ON payments(status);
+CREATE INDEX idx_payments_provider_id ON payments(provider_id);
+CREATE INDEX idx_payments_deleted_at ON payments(deleted_at);
 
 -- refunds table
 CREATE TABLE refunds (
@@ -51,8 +52,10 @@ CREATE TABLE refunds (
     deleted_at TIMESTAMP NULL,
     processed_at TIMESTAMP NULL,
     
-    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE CASCADE,
-    INDEX idx_refunds_payment_id (payment_id),
-    INDEX idx_refunds_status (status),
-    INDEX idx_refunds_deleted_at (deleted_at)
+    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE CASCADE
 );
+
+-- Create indexes for refunds table
+CREATE INDEX idx_refunds_payment_id ON refunds(payment_id);
+CREATE INDEX idx_refunds_status ON refunds(status);
+CREATE INDEX idx_refunds_deleted_at ON refunds(deleted_at);
