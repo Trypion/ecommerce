@@ -7,7 +7,7 @@ import (
 )
 
 type Refund struct {
-	ID        string `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
+	ID        string `gorm:"primaryKey;type:uuid;default:uuidv7()" json:"id"`
 	PaymentID string `gorm:"not null;index" json:"payment_id"`
 
 	Amount   float64      `gorm:"not null;type:decimal(10,2)" json:"amount"`

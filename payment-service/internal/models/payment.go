@@ -8,7 +8,7 @@ import (
 )
 
 type Payment struct {
-	ID      string `gorm:"primaryKey;type:uuid;default:gen_random_uuid()" json:"id"`
+	ID      string `gorm:"primaryKey;type:uuid;default:uuidv7()" json:"id"`
 	OrderID string `gorm:"not null;index" json:"order_id"`
 	UserID  string `gorm:"not null;index" json:"user_id"`
 

@@ -1,6 +1,6 @@
 -- payments table
 CREATE TABLE payments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     order_id VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL,
     
@@ -35,7 +35,7 @@ CREATE INDEX idx_payments_deleted_at ON payments(deleted_at);
 
 -- refunds table
 CREATE TABLE refunds (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     payment_id UUID NOT NULL,
     
     amount DECIMAL(10,2) NOT NULL,
