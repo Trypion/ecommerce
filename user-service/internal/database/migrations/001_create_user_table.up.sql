@@ -5,7 +5,8 @@ CREATE TABLE users (
     name VARCHAR(255),
     role VARCHAR(50) DEFAULT 'customer',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
 );
 
 -- Add indexes for faster queries
