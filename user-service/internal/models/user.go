@@ -17,3 +17,17 @@ type User struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
+
+type UserAlreadyExistsError struct {
+	Email string
+}
+
+func (e *UserAlreadyExistsError) Error() string {
+	return "user with email " + e.Email + " already exists"
+}
+
+type InvalidCredentialsError struct{}
+
+func (e *InvalidCredentialsError) Error() string {
+	return "invalid email or password"
+}
