@@ -10,7 +10,7 @@ import (
 
 type UserService interface {
 	Create(ctx context.Context, email string, password string, name string) (*models.User, error)
-	Update(ctx context.Context, user *models.User) error
+	Update(ctx context.Context, userID string, email string, name string) error
 	GetById(ctx context.Context, userID string) (*models.User, error)
 	Delete(ctx context.Context, userID string) (*models.User, error)
 	Login(ctx context.Context, email string, password string) (*models.AuthLogin, error)
@@ -22,6 +22,32 @@ type userService struct {
 
 func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{repo: repo}
+}
+
+func (s *userService) Login(ctx context.Context, email string, password string) (*models.AuthLogin, error) {
+	user, err := s.repo.GetByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, &models.InvalidCredentialsError{}
+	}
+
+	notMatch := utils.CheckPassword(user.Password, password)
+	if notMatch {
+		return nil, &models.InvalidCredentialsError{}
+	}
+
+	signedToken, err := utils.SignJWT(*user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.AuthLogin{
+		User:  models.AuthUser{ID: user.ID, Email: user.Email, Name: user.Name, Role: user.Role},
+		Token: signedToken,
+	}, nil
 }
 
 func (s *userService) Create(ctx context.Context, email string, password string, name string) (*models.User, error) {
@@ -50,5 +76,40 @@ func (s *userService) Create(ctx context.Context, email string, password string,
 		return nil, err
 	}
 
+	return user, nil
+}
+
+func (s *userService) Update(ctx context.Context, userID string, email string, name string) error {
+	user, err := s.repo.GetById(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
+		return &models.UserNotFoundError{UserID: userID}
+	}
+
+	user.Email = email
+	user.Name = name
+
+	return s.repo.Update(ctx, user)
+}
+
+func (s *userService) GetById(ctx context.Context, userID string) (*models.User, error) {
+	return s.repo.GetById(ctx, userID)
+}
+
+func (s *userService) Delete(ctx context.Context, userID string) (*models.User, error) {
+	user, err := s.repo.GetById(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, &models.UserNotFoundError{UserID: userID}
+	}
+	if err := s.repo.Delete(ctx, userID); err != nil {
+		return nil, err
+	}
 	return user, nil
 }

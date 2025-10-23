@@ -31,3 +31,11 @@ type InvalidCredentialsError struct{}
 func (e *InvalidCredentialsError) Error() string {
 	return "invalid email or password"
 }
+
+type UserNotFoundError struct {
+	UserID string
+}
+
+func (e *UserNotFoundError) Error() string {
+	return "user with ID " + e.UserID + " not found"
+}
