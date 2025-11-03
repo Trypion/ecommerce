@@ -23,8 +23,9 @@ message GetUserResponse {
 }
 
 message UpdateUserRequest {
-  string email = 1;
-  string name = 2;
+  string user_id = 1;
+  string email = 2;
+  string name = 3;
 }
 
 message UpdateUserResponse {

@@ -8,6 +8,6 @@ type AuthUser struct {
 }
 
 type AuthLogin struct {
-	User  AuthUser
+	User  *User
 	Token string
 }

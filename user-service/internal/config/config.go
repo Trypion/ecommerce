@@ -28,12 +28,12 @@ func Load() *Config {
 
 	return &Config{
 		DatabaseURL: getEnv("DATABASE_URL", ""),
-		Port:        getEnv("PORT", "50051"),
+		Port:        getEnv("PORT", "50050"),
 		DBHost:      getEnv("DB_HOST", "localhost"),
 		DBPort:      dbPort,
 		DBUser:      getEnv("DB_USER", "postgres"),
 		DBPassword:  getEnv("DB_PASSWORD", "postgres"),
-		DBName:      getEnv("DB_NAME", "orders_service"),
+		DBName:      getEnv("DB_NAME", "user_service"),
 	}
 }
 

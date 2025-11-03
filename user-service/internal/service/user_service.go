@@ -10,7 +10,7 @@ import (
 
 type UserService interface {
 	Create(ctx context.Context, email string, password string, name string) (*models.User, error)
-	Update(ctx context.Context, userID string, email string, name string) error
+	Update(ctx context.Context, userID string, email string, name string) (*models.User, error)
 	GetById(ctx context.Context, userID string) (*models.User, error)
 	Delete(ctx context.Context, userID string) (*models.User, error)
 	Login(ctx context.Context, email string, password string) (*models.AuthLogin, error)
@@ -45,7 +45,8 @@ func (s *userService) Login(ctx context.Context, email string, password string) 
 	}
 
 	return &models.AuthLogin{
-		User:  models.AuthUser{ID: user.ID, Email: user.Email, Name: user.Name, Role: user.Role},
+		// User:  models.AuthUser{ID: user.ID, Email: user.Email, Name: user.Name, Role: user.Role},
+		User:  user,
 		Token: signedToken,
 	}, nil
 }
@@ -79,20 +80,25 @@ func (s *userService) Create(ctx context.Context, email string, password string,
 	return user, nil
 }
 
-func (s *userService) Update(ctx context.Context, userID string, email string, name string) error {
+func (s *userService) Update(ctx context.Context, userID string, email string, name string) (*models.User, error) {
 	user, err := s.repo.GetById(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if user == nil {
-		return &models.UserNotFoundError{UserID: userID}
+		return nil, &models.UserNotFoundError{UserID: userID}
 	}
 
 	user.Email = email
 	user.Name = name
 
-	return s.repo.Update(ctx, user)
+	err = s.repo.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (s *userService) GetById(ctx context.Context, userID string) (*models.User, error) {
