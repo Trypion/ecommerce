@@ -6,6 +6,7 @@ import (
 	"github.com/Trypion/ecommerce/user-service/internal/models"
 	"github.com/Trypion/ecommerce/user-service/internal/repository"
 	"github.com/Trypion/ecommerce/user-service/internal/utils"
+	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -58,7 +59,7 @@ func (s *userService) Create(ctx context.Context, email string, password string,
 	}
 
 	user, err := s.repo.GetByEmail(ctx, email)
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 

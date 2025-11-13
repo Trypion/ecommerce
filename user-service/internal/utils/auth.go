@@ -46,5 +46,5 @@ func SignJWT(user models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// TODO: place holder secret key. Change to env variable for production.
-	return token.SignedString("mySuperSecretKey")
+	return token.SignedString([]byte("mySuperSecretKey"))
 }

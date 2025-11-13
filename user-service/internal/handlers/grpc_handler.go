@@ -97,6 +97,7 @@ func converUserToProto(user *models.User) *userpb.User {
 		Id:        user.ID,
 		Email:     user.Email,
 		Name:      user.Name,
+		Role:      user.Role,
 		CreatedAt: user.CreatedAt.Format(time.RFC3339),
 	}
 }
