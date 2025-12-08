@@ -1,0 +1,13 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  bin = "./tmp/user-service"
+  cmd = "go build -o ./tmp/user-service ./cmd/main.go"
+  include_ext = ["go"]
+  exclude_regex = ["_test.go"]
+  exclude_dir = ["tmp", "vendor"]
+  delay = 1000
+
+[screen]
+  keep_scroll = true
