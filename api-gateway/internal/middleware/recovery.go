@@ -8,7 +8,7 @@ import (
 )
 
 func Recovery() gin.HandlerFunc {
-	return gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
+	return gin.CustomRecovery(func(c *gin.Context, recovered any) {
 		if err, ok := recovered.(string); ok {
 			logrus.WithFields(logrus.Fields{
 				"error":      err,

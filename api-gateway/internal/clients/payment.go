@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Trypion/ecommerce/api-gateway/internal/interceptors"
 	"github.com/Trypion/ecommerce/api-gateway/internal/models"
 	paymentpb "github.com/Trypion/ecommerce/proto/payment"
 	"google.golang.org/grpc"
@@ -16,7 +17,11 @@ type PaymentClient struct {
 }
 
 func NewPaymentClient(address string) (*PaymentClient, error) {
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(
+		address,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(interceptors.RequestIDUnaryClientInterceptor()),
+	)
 	if err != nil {
 		return nil, err
 	}

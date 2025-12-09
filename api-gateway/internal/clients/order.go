@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Trypion/ecommerce/api-gateway/internal/interceptors"
 	"github.com/Trypion/ecommerce/api-gateway/internal/models"
 	orderpb "github.com/Trypion/ecommerce/proto/order"
 	"google.golang.org/grpc"
@@ -16,7 +17,11 @@ type OrderClient struct {
 }
 
 func NewOrderClient(address string) (*OrderClient, error) {
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials((insecure.NewCredentials())))
+	conn, err := grpc.NewClient(
+		address,
+		grpc.WithTransportCredentials((insecure.NewCredentials())),
+		grpc.WithUnaryInterceptor(interceptors.RequestIDUnaryClientInterceptor()),
+	)
 	if err != nil {
 		return nil, err
 	}

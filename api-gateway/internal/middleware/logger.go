@@ -9,6 +9,12 @@ import (
 
 func Logger() gin.HandlerFunc {
 	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+
+		requestID := ""
+		if rid := param.Request.Context().Value("request_id"); rid != nil {
+			requestID = rid.(string)
+		}
+
 		logrus.WithFields(logrus.Fields{
 			"status_code": param.StatusCode,
 			"latency":     param.Latency,
@@ -17,6 +23,7 @@ func Logger() gin.HandlerFunc {
 			"path":        param.Path,
 			"user_agent":  param.Request.UserAgent(),
 			"timestamp":   param.TimeStamp.Format(time.RFC3339),
+			"request_id":  requestID,
 		}).Info("HTTP Request")
 
 		return ""

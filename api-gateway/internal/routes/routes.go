@@ -13,13 +13,13 @@ func SetupRoutes(
 	paymentHandler *handlers.PaymentHandler) {
 
 	router.Use(middleware.Recovery())
+	router.Use(middleware.RequestID())
 	router.Use(middleware.Logger())
 	router.Use(middleware.CORS())
 
 	router.GET("/health", func(c *gin.Context) { c.JSON(200, models.HealthResponse{Status: "OK"}) })
 
 	v1 := router.Group("/api/v1")
-	v1.Use(middleware.RequestID())
 
 	SetupOrderRoutes(v1, orderHandler)
 	SetupPaymentRoutes(v1, paymentHandler)

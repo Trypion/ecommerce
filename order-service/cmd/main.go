@@ -10,6 +10,7 @@ import (
 	"github.com/Trypion/ecommerce/order-service/internal/config"
 	"github.com/Trypion/ecommerce/order-service/internal/database"
 	"github.com/Trypion/ecommerce/order-service/internal/handlers"
+	"github.com/Trypion/ecommerce/order-service/internal/interceptors"
 	"github.com/Trypion/ecommerce/order-service/internal/repository"
 	"github.com/Trypion/ecommerce/order-service/internal/service"
 	orderpb "github.com/Trypion/ecommerce/proto/order"
@@ -41,11 +42,21 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		// Chain multiple unary interceptors !!ORDER MATTERS!!
+		grpc.ChainUnaryInterceptor(
+			interceptors.RequestIDUnaryServerInterceptor(), // 1º: Extract request ID
+			interceptors.LoggingUnaryServerInterceptor(),   // 2º: Log request ID
+
+		),
+	)
+
 	orderpb.RegisterOrderServiceServer(grpcServer, orderHandler)
 
 	// Enable reflection for development (optional)
-	reflection.Register(grpcServer)
+	if cfg.Environment != "production" {
+		reflection.Register(grpcServer)
+	}
 
 	// Graceful shutdown
 	go func() {

@@ -13,6 +13,7 @@ import (
 	"github.com/Trypion/ecommerce/user-service/internal/config"
 	"github.com/Trypion/ecommerce/user-service/internal/database"
 	"github.com/Trypion/ecommerce/user-service/internal/handlers"
+	"github.com/Trypion/ecommerce/user-service/internal/interceptors"
 	"github.com/Trypion/ecommerce/user-service/internal/repository"
 	"github.com/Trypion/ecommerce/user-service/internal/service"
 
@@ -38,11 +39,21 @@ func main() {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		// Chain multiple unary interceptors !!ORDER MATTERS!!
+		grpc.ChainUnaryInterceptor(
+			interceptors.RequestIDUnaryServerInterceptor(), // 1º: Extract request ID
+			interceptors.LoggingUnaryServerInterceptor(),   // 2º: Log request ID
+
+		),
+	)
 
 	userpb.RegisterUserServiceServer(grpcServer, userHandler)
 
-	reflection.Register(grpcServer)
+	// Enable reflection for development (optional)
+	if cfg.Environment != "production" {
+		reflection.Register(grpcServer)
+	}
 
 	go func() {
 		log.Printf("gRC server stating on port %s", cfg.Port)
